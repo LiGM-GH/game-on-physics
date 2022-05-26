@@ -32,12 +32,36 @@ class Measure
     self.class.new(value + other.value)
   end
 
+  def -(other)
+    raise ArgumentError, "Can't sum #{self.class} and #{other.class}" unless instance_of?(other.class)
+
+    self.class.new(value - other.value)
+  end
+
+  def *(other)
+    unless other.is_a?(Integer) || other.is_a?(Float) || other.is_a?(Rational)
+      raise ArgumentError,
+            "Can't multiply #{underscored_class.pluralize} with #{other.class}"
+    end
+
+    self.class.new(Rational(@value) * other)
+  end
+
+  def /(other)
+    unless other.is_a?(Numeric)
+      raise ArgumentError,
+            "Can't divide #{underscored_class.pluralize} with #{other.class}"
+    end
+
+    self.class.new(Rational(@value) / other)
+  end
+
   def ==(other)
     @value == other.value
   end
 
   def to_s
-    if value % 10 == 1 && value % 100 != 11
+    if @value.is_a?(Integer) && value % 10 == 1 && value % 100 != 11
       "#{@value} #{underscored_class.singularize}"
     else
       "#{@value} #{underscored_class.pluralize}"

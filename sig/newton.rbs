@@ -13,9 +13,13 @@ class Measure
   def initialize: (Numeric) -> void
   def +: (Measure) -> Measure
   def ==: (Measure) -> bool
+  def *: (Numeric) -> Measure
   def to_s: -> String
   def underscored_class: -> String
 end
 
 class Newton < Measure
+end
+
+class Radian < Measure
 end
