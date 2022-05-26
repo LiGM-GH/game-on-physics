@@ -1,0 +1,5 @@
+class Object
+  def source: (untyped) -> untyped
+  def group: (untyped) { (untyped) -> untyped } -> untyped
+  def gem: (untyped) -> untyped
+end

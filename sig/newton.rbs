@@ -1,0 +1,21 @@
+class Object
+  def convert_method: (singleton(Measure) klass) -> untyped
+end
+
+class String
+  def pluralize: -> String
+  def singularize: -> String
+  def underscore: -> String
+end
+
+class Measure
+  attr_reader value: Numeric
+  def initialize: (Numeric) -> void
+  def +: (Measure) -> Measure
+  def ==: (Measure) -> bool
+  def to_s: -> String
+  def underscored_class: -> String
+end
+
+class Newton < Measure
+end
