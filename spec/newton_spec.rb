@@ -22,4 +22,8 @@ describe Newton do
     expect { newton * 1.newton }.to raise_exception(ArgumentError)
     expect { newton / 1.newton }.to raise_exception(ArgumentError)
   end
+
+  it 'can be used as a numeric in some cases' do
+    expect(newton.to_f).to eq(1.0.newtons)
+  end
 end

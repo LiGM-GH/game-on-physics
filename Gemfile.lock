@@ -71,6 +71,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  activesupport
   rspec
   rubocop
   steep

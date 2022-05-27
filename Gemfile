@@ -8,3 +8,5 @@ group :development do
   gem 'rubocop'
   gem 'steep'
 end
+
+gem 'activesupport'

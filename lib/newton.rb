@@ -17,9 +17,13 @@ class Measure
   convert_method(self)
 
   def initialize(number)
-    raise ArgumentError, 'argument must be a number' unless number.is_a?(Numeric)
+    raise ArgumentError, 'argument must be a number' unless number.is_a?(Numeric) || number.is_a?(self.class)
 
-    @value = number
+    @value = if number.is_a?(self.class)
+               number.value
+             else
+               number
+             end
   end
 
   def value
@@ -57,6 +61,8 @@ class Measure
   end
 
   def ==(other)
+    raise ArgumentError, "Method not implemented: #{self.class} == #{other.class}" unless instance_of?(other.class)
+
     @value == other.value
   end
 
@@ -70,6 +76,16 @@ class Measure
 
   def underscored_class
     (self.class.name || '').underscore
+  end
+
+  def respond_to_missing?(name)
+    value.respond_to?(name)
+  end
+
+  def method_missing(name, *args, **kwargs, &block)
+    value.send(name, *args, **kwargs, &block).yield_self do |val|
+      val.is_a?(Numeric) ? val.newtons : val
+    end
   end
 end
 

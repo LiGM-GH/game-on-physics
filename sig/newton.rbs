@@ -10,7 +10,7 @@ end
 
 class Measure
   attr_reader value: Numeric
-  def initialize: (Numeric) -> void
+  def initialize: (Numeric | Measure) -> void
   def +: (Measure) -> Measure
   def ==: (Measure) -> bool
   def *: (Numeric) -> Measure
