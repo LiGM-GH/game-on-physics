@@ -1,5 +1,9 @@
-class Object
-  def convert_method: (singleton(Measure) klass) -> untyped
+class Numeric
+  def measure: -> Measure
+  def newton:  -> Newton
+  def newtons: -> Newton
+  def radian:  -> Radian
+  def radians: -> Radian
 end
 
 class String
@@ -16,6 +20,7 @@ class Measure
   def *: (Numeric) -> Measure
   def to_s: -> String
   def underscored_class: -> String
+  def self.allow_numeric_convert: -> untyped
 end
 
 class Newton < Measure

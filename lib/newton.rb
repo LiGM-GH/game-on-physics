@@ -2,26 +2,32 @@
 
 require 'active_support/inflector'
 
-def convert_method(klass)
-  block = lambda do
-    the_self = self
-    klass.new(the_self) if the_self.is_a? ::Numeric
-  end
-  Numeric.define_method(to_s.downcase.singularize.to_sym, block)
-  Numeric.define_method(to_s.downcase.pluralize.to_sym, block)
-end
-
 ##
 # Abstract class for measures
 class Measure
-  convert_method(self)
+  def self.allow_numeric_convert
+    # @type var klass: singleton(Measure)
+    klass = self
+    block = lambda do
+      value = self
+      klass.new(value) if value.is_a? ::Numeric
+    end
+    Numeric.define_method(to_s.downcase.singularize.to_sym, block)
+    Numeric.define_method(to_s.downcase.pluralize.to_sym, block)
+  end
+
+  allow_numeric_convert
 
   def initialize(number)
-    raise ArgumentError, 'argument must be a number' unless number.is_a?(Numeric) || number.is_a?(self.class)
+    unless number.is_a?(Numeric) || number.is_a?(self.class)
+      raise ArgumentError,
+            "argument must be a Numeric or a #{self.class}"
+    end
 
-    @value = if number.is_a?(self.class)
+    @value = case number
+             when self.class
                number.value
-             else
+             when Numeric
                number
              end
   end
@@ -67,19 +73,16 @@ class Measure
   end
 
   def to_s
-    if @value.is_a?(Integer) && value % 10 == 1 && value % 100 != 11
+    # // FOR RUSSIAN % 10 == 1 && value % 100 != 11
+    if @value.is_a?(Integer) && value == 1
       "#{@value} #{underscored_class.singularize}"
     else
       "#{@value} #{underscored_class.pluralize}"
     end
   end
 
-  def underscored_class
-    (self.class.name || '').underscore
-  end
-
-  def respond_to_missing?(name)
-    value.respond_to?(name)
+  def respond_to_missing?(*args)
+    value.respond_to?(*args)
   end
 
   def method_missing(name, *args, **kwargs, &block)
@@ -87,16 +90,22 @@ class Measure
       val.is_a?(Numeric) ? val.newtons : val
     end
   end
+
+  private
+
+  def underscored_class
+    (self.class.name || '').underscore
+  end
 end
 
 ##
 # Implements newtons
 class Newton < Measure
-  convert_method(self)
+  allow_numeric_convert
 end
 
 ##
 # Implements radians
 class Radian < Measure
-  convert_method(self)
+  allow_numeric_convert
 end
