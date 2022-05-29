@@ -81,8 +81,8 @@ class Measure
     end
   end
 
-  def respond_to_missing?(*args)
-    value.respond_to?(*args)
+  def respond_to_missing?(name, include_all)
+    value.respond_to?(name, include_all)
   end
 
   def method_missing(name, *args, **kwargs, &block)
