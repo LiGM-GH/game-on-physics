@@ -4,6 +4,7 @@ D = Steep::Diagnostic
 
 target :lib do
   signature 'sig'
+  check '~/.rbs/gem-rbs-collection'
 
   check 'lib'                       # Directory name
   check 'Gemfile'                   # File name

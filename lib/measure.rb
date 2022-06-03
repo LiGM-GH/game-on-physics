@@ -5,15 +5,48 @@ require 'active_support/inflector'
 ##
 # Abstract class for measures
 class Measure
-  def self.allow_numeric_convert
-    # @type var klass: singleton(Measure)
-    klass = self
-    block = lambda do
-      value = self
-      klass.new(value) if value.is_a? ::Numeric
+  class << self
+    attr_reader :all
+
+    def allow_numeric_convert
+      klass = self
+
+      block = lambda do
+        value = self
+        klass.new(value) if value.is_a? ::Numeric
+      end
+
+      Numeric.define_method(klass.to_s.downcase.singularize.to_sym, block)
+      Numeric.define_method(klass.to_s.downcase.pluralize.to_sym, block)
     end
-    Numeric.define_method(to_s.downcase.singularize.to_sym, block)
-    Numeric.define_method(to_s.downcase.pluralize.to_sym, block)
+
+    def register(klass)
+      @all ||= []
+      @all << klass unless @all.include?(klass)
+      @all
+    end
+
+    def make(name = nil, &block)
+      if name
+        make_with_name(name, &block)
+      else
+        Class.new(self, &block)
+      end
+    end
+
+    def make_with_name(name, &block)
+      Object.const_defined?(name.classify) &&
+        raise(Measure::MakeExistingError,
+              "Trying to make #{name.classify} which already exists")
+
+      klass = Object.const_set(name.classify, Class.new(self))
+
+      klass.class_exec do
+        allow_numeric_convert
+        Measure.register(self)
+        class_exec(&block) if block_given?
+      end
+    end
   end
 
   allow_numeric_convert
@@ -73,7 +106,6 @@ class Measure
   end
 
   def to_s
-    # // FOR RUSSIAN % 10 == 1 && value % 100 != 11
     if @value.is_a?(Integer) && value == 1
       "#{@value} #{underscored_class.singularize}"
     else
@@ -96,16 +128,6 @@ class Measure
   def underscored_class
     (self.class.name || '').underscore
   end
-end
 
-##
-# Implements newtons
-class Newton < Measure
-  allow_numeric_convert
-end
-
-##
-# Implements radians
-class Radian < Measure
-  allow_numeric_convert
+  class MakeExistingError < StandardError; end
 end
