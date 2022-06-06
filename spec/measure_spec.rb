@@ -4,7 +4,7 @@ require 'newton'
 
 describe Newton do
   let(:newton) { 1.newton }
-  let(:measure) { 1.measure }
+  let(:measurement_unit) { 1.measurement_unit }
 
   it 'performs ariphmetical operations' do
     expect(newton + 2.newtons).to eq(3.newtons)
@@ -14,10 +14,10 @@ describe Newton do
   end
 
   it 'raises in ariphmetics on unexpected types' do
-    expect { newton + measure }.to raise_exception(ArgumentError)
-    expect { newton - measure }.to raise_exception(ArgumentError)
-    expect { newton * measure }.to raise_exception(ArgumentError)
-    expect { newton / measure }.to raise_exception(ArgumentError)
+    expect { newton + measurement_unit }.to raise_exception(ArgumentError)
+    expect { newton - measurement_unit }.to raise_exception(ArgumentError)
+    expect { newton * measurement_unit }.to raise_exception(ArgumentError)
+    expect { newton / measurement_unit }.to raise_exception(ArgumentError)
     expect { newton * 'Hello' }.to raise_exception(ArgumentError)
     expect { newton * 1.newton }.to raise_exception(ArgumentError)
     expect { newton / 1.newton }.to raise_exception(ArgumentError)

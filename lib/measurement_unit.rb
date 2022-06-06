@@ -1,51 +1,36 @@
 # frozen_string_literal: true
 
 require 'active_support/inflector'
+require_relative 'makeable'
+require_relative 'numeric_convertable'
 
 ##
-# Abstract class for measures
-class Measure
-  class << self
-    attr_reader :all
+# Abstract class for measurement units
+class MeasurementUnit
+  extend NumericConvertible
+  extend Makeable
 
-    def allow_numeric_convert
-      klass = self
+  def self.each(*_args, **_kwargs, &block)
+    (@all ||= []).each(&block)
+  end
 
-      block = lambda do
-        value = self
-        klass.new(value) if value.is_a? ::Numeric
-      end
+  extend Enumerable
 
-      Numeric.define_method(klass.to_s.downcase.singularize.to_sym, block)
-      Numeric.define_method(klass.to_s.downcase.pluralize.to_sym, block)
-    end
+  def self.register(obj)
+    @all ||= []
+    @all << obj unless @all.include?(obj)
+    @all
+  end
 
-    def register(klass)
-      @all ||= []
-      @all << klass unless @all.include?(klass)
-      @all
-    end
-
-    def make(name = nil, &block)
-      if name
-        make_with_name(name, &block)
-      else
-        Class.new(self, &block)
-      end
-    end
-
-    def make_with_name(name, &block)
-      Object.const_defined?(name.classify) &&
-        raise(Measure::MakeExistingError,
-              "Trying to make #{name.classify} which already exists")
-
-      klass = Object.const_set(name.classify, Class.new(self))
-
-      klass.class_exec do
+  def self.make(name = nil, &block)
+    if name
+      make_with_name(name) do
+        MeasurementUnit.register(self) # registering in measurement unit as self.class(Newton, etc)
         allow_numeric_convert
-        Measure.register(self)
         class_exec(&block) if block_given?
       end
+    else
+      Class.new(self) { class_exec(&block) if block_given? }
     end
   end
 
@@ -58,10 +43,8 @@ class Measure
     end
 
     @value = case number
-             when self.class
-               number.value
-             when Numeric
-               number
+             when self.class then number.value
+             when Numeric    then number
              end
   end
 
@@ -128,6 +111,4 @@ class Measure
   def underscored_class
     (self.class.name || '').underscore
   end
-
-  class MakeExistingError < StandardError; end
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative 'lib/measure'
-require_relative 'lib/measure_list'
+require_relative 'lib/measurement_unit'
+require_relative 'lib/unit_list'
 
 CARET_BACK = "\33[1A"
 QUESTION = 'How many newtons do we have here? '

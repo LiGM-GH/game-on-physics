@@ -1,14 +1,11 @@
-# frozen_string_literal: true
-
 D = Steep::Diagnostic
 
 target :lib do
-  signature 'sig'
-  check '~/.rbs/gem-rbs-collection'
+  # signature 'sig'
 
-  check 'lib'                       # Directory name
-  check 'Gemfile'                   # File name
-  check 'app/models/**/*.rb'        # Glob
+  # check "lib"                       # Directory name
+  # check "Gemfile"                   # File name
+  # check "app/models/**/*.rb"        # Glob
   # ignore "lib/templates/*.rb"
 
   # library "pathname", "set"       # Standard libraries

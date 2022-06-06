@@ -1,0 +1,30 @@
+module Physics
+  module DSL
+    def scalar: (Symbol) ?{ (untyped) -> void } -> void
+    def vector: (Symbol) ?{ (untyped) -> void } -> void
+    def unit:   (Symbol) ?{ (untyped) -> void } -> void
+  end
+end
+
+# Something like:
+# 
+# scalar :weight do |w|
+#   w.unit = :kilogramm
+# end
+# 
+# vector :force do |f|
+#   f.unit = :newton
+# end
+# 
+# vector :acceleration do |a|
+#   a.unit = :meter, :/, :second, :**, :2
+# end
+# 
+# unit :kilogramm
+# unit :meter
+# unit :second
+# 
+# declare_dependency :meter, :second do
+#   meter / second => velocity_unit
+#   velocity_unit
+# end

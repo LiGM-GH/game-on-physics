@@ -7,19 +7,19 @@ It would be perfect, right?
 
 ## We want to make it!
 We want our tool to be like:
-- you make a measure
+- you make a measurement_unit
 - you make a physical quantity
 - you declare their relations
 - you get a full-power physic, like
 
 ```Ruby
   Quantity.make(:Power) do
-    has_measure :Newtons
+    has_unit :Newtons
     vector_value
   end
 
   Quantity.make :Pressure do
-    has_measure :Pascals
+    has_unit :Pascals
     scalar_value
   end
 
@@ -37,7 +37,7 @@ To feel this better, look at RBS:
       def /: (Area) -> Pressure # Added by declare_dependency
     end
 
-    class Newton < Measure
+    class Newton < MeasurementUnit
       def /: (Meter) -> Pascal  # Added by declare_dependency
     end
 
